@@ -6,8 +6,8 @@ class Blip2Lavis():
         self.model_type = model_type
         self.blip2, self.blip2_vis_processors, _ = load_model_and_preprocess(
             name=name, model_type=model_type, is_eval=True, device=device)
-        if 't5xl' in self.model_type:
-            self.blip2 = self.blip2.float()
+        # if 't5xl' in self.model_type:
+        #     self.blip2 = self.blip2.float()
         self.device = device
 
     def ask(self, img_path, question, length_penalty=1.0, max_length=30):
