@@ -52,12 +52,44 @@ def load_vcr_data(vcr_data_path):
 
     return img_paths
 
+def load_ve_data(ve_data_path, image_path):
+    ve_anno_path = os.path.join(ve_data_path, 'snli_ve_dev.jsonl')
+    img_paths = {}
+
+    # Obtain subset annot_ids
+    id_partitions = None
+    if args.data_subset is not None:
+        with open(args.data_subset, "r") as file:
+            id_partitions = yaml.safe_load(file)
+
+    with jsonlines.open(ve_anno_path) as jsonl_file:
+        for line in jsonl_file:
+            pair_id = line['pairID']
+            image_name = line['Flikr30kID']
+            if id_partitions is not None:
+                if pair_id not in id_partitions:
+                    continue
+            img_path = os.path.join(image_path, image_name)
+            img_paths[pair_id] = img_path
+
+    # Only keep samples in partitions.
+    if args.data_partition is not None:
+        start_data_id, end_data_id = args.data_partition.split('_')
+        _ids = list(img_paths)[int(start_data_id):int(end_data_id)+1]
+        img_paths = {key:img_paths[key] for key in _ids}
+
+    return img_paths
+
 # ========================================
 #             Data Loading
 # ========================================
 if 'vcr' in args.dataset:
     vcr_data_path = '/home/haoxuan/data/vcr1/'
     img_paths = load_vcr_data(vcr_data_path)
+elif 've' in args.dataset:
+    ve_data_path = '/dvmm-filer3a/users/rui/multi-task/datasets/visual_entailment/'
+    ve_image_path = '/home/tangtangwzc/flickr_data/flickr30k_images/flickr30k_images/'
+    img_paths = load_ve_data(ve_data_path, ve_image_path)
 else:
     raise NotImplementedError('Not support other datasets yet.')
 print('{} Samples Loading Finished'.format(len(img_paths)))
