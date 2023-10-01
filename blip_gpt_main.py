@@ -8,11 +8,13 @@ from tqdm import tqdm
 import pdb
 
 from data import VCRSampler
+from data import VESampler
 
 from chat import VCRConversationTwoAgent
+from chat import VEConversationTwoAgent
 import random
 
-def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, print_mode='no', prompt_setting='v1', temp_gpt=0.0):
+def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, print_mode='no', prompt_setting='v1a', temp_gpt=0.0):
     """
     Conduct IdealGPT conversation
 
@@ -43,23 +45,39 @@ def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, 
             continue
         if print_mode != 'no':
             print('Data ID {}'.format(data_id))
-            
-        image_path, qa = dataset.fetch_data(data_id)
-        info = {'setting':
-                    {
-                     'id': data_id,
-                     'question_id': qa['question_id'] if 'question_id' in qa else None,
-                     'question': qa['question'].strip(),
-                     'answer_choices':[answer_i.strip() for answer_i in qa['answer_choices']] if 'answer_choices' in qa else None,
-                     'answer_label': str(qa['answer_label']) if 'answer_label' in qa else None,
-                     'max_n_rounds': max_n_rounds,
-                     'img_path': qa['img_path'] if 'img_path' in qa else None
-                    }
-               }
-        if 'caption' in qa:
-            caption = qa['caption']
-        else:
-            caption = None
+
+        if type(dataset) == VCRSampler:
+            image_path, qa = dataset.fetch_data(data_id)
+            info = {'setting':
+                        {
+                        'id': data_id,
+                        'question_id': qa['question_id'] if 'question_id' in qa else None,
+                        'question': qa['question'].strip(),
+                        'answer_choices':[answer_i.strip() for answer_i in qa['answer_choices']] if 'answer_choices' in qa else None,
+                        'answer_label': str(qa['answer_label']) if 'answer_label' in qa else None,
+                        'max_n_rounds': max_n_rounds,
+                        'img_path': qa['img_path'] if 'img_path' in qa else None
+                        }
+                }
+            if 'caption' in qa:
+                caption = qa['caption']
+            else:
+                caption = None
+        elif type(dataset) == VESampler:
+            image_path, ve_info = dataset.fetch_data(data_id)
+            info = {'setting':
+                        {
+                        'id': data_id,
+                        'hypothesis': ve_info['hypothesis'].strip(),
+                        'answer_label': str(ve_info['answer_label']) if 'answer_label' in ve_info else None,
+                        'max_n_rounds': max_n_rounds,
+                        'img_path': ve_info['img_path'] if 'img_path' in ve_info else None
+                        }
+                }
+            if 'caption' in ve_info:
+                caption = ve_info['caption']
+            else:
+                caption = None
         results = {}
         # Initialize VQA Instance.
         if type(dataset) == VCRSampler:
@@ -72,7 +90,16 @@ def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, 
                                 caption=caption,
                                 temp_gpt=temp_gpt,
                                 data_id=data_id,)
-        # TODO(rui): Add VE Class.
+        elif type(dataset) == VESampler:
+            chat = VEConversationTwoAgent(img=image_path,
+                                vqa_model=vqa_model,
+                                model=model,
+                                question=info['setting']['hypothesis'],
+                                answer_choices=['entailment', 'neutral', 'contradiction'],
+                                prompt_setting=prompt_setting,
+                                caption=caption,
+                                temp_gpt=temp_gpt,
+                                data_id=data_id)
 
 
         used_round = chat.chatting(max_n_rounds, print_mode=print_mode)
@@ -95,8 +122,8 @@ def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, 
                 yaml.dump(info, f)
 
     # Evaluation:
-    if type(dataset) == VCRSampler:
-        # Evaluate VCR by acc.
+    if type(dataset) == VCRSampler or type(dataset) == VESampler:
+        # Evaluate VCR and SNLI-VE by acc.
         total_correct = 0
         total_exceed_round = 0
         for predict_i, gt_i in zip(all_predict_answer, all_answer_label):
@@ -123,7 +150,7 @@ def parse():
     parser.add_argument('--exp_tag', type=str, required=True, 
                         help='tag for this experiment. caption results will be saved in save_root/exp_tag')
     parser.add_argument('--dataset', type=str, default='vcr_val',
-                        help='Names of the dataset to use in the experiment. Valid datasets include vcr_val. Default is vcr_val')
+                        help='Names of the dataset to use in the experiment. Valid datasets include vcr_val, ve_dev. Default is vcr_val')
     parser.add_argument('--max_n_rounds', type=int, default=4,
                         help='Nax Number of QA rounds between GPT and BLIP-2. Default is 4.')
     parser.add_argument('--model', type=str, default='chatgpt', choices=['chatgpt', 'gpt4'],
@@ -132,7 +159,7 @@ def parse():
                         help='model as Answerer.')
     parser.add_argument('--device_id', type=int, default=0, 
                         help='Which GPU to use.')
-    parser.add_argument('--prompt_setting', type=str,  default='v1', 
+    parser.add_argument('--prompt_setting', type=str,  default='v1a', 
                         help='Prompt Setting Version')
     parser.add_argument('--openai_key', type=str,  default='', 
                         help='OpenAI Key for GPT-3.5/4 API')
@@ -161,7 +188,12 @@ def main(args):
                              data_subset=args.data_subset, 
                              data_partition=args.data_partition, 
                              caption_path=args.caption_path)
-    # TODO(rui): Add VE dataset.
+    elif 've' in args.dataset:
+        dataset = VESampler(dataset_root=args.data_root,
+                               dataset_name=args.dataset, 
+                               data_subset=args.data_subset,
+                               data_partition=args.data_partition, 
+                               caption_path=args.caption_path)
     print('Finish loading data')
 
     print('Start loading VQA model')

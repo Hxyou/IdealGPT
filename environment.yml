@@ -1,0 +1,41 @@
+name: idealgpt
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - pip=23.0.1=py38h06a4308_0
+  - python=3.8.16=h7a1cb2a_3
+  - pip:
+    - fairscale==0.4.4
+    - ftfy==6.1.1
+    - huggingface-hub==0.13.2
+    - jsonlines==3.1.0
+    - jsonschema==4.17.3
+    - langcodes==3.3.0
+    - lazy-loader==0.1
+    - matplotlib==3.7.1
+    - numpy==1.24.2
+    - openai==0.27.5
+    - opencv-python-headless==4.5.5.64
+    - opendatasets==0.1.22
+    - pandas==1.5.3
+    - pathy==0.10.1
+    - pillow==9.4.0
+    - pyarrow==11.0.0
+    - pycocoevalcap==1.2
+    - pycocotools==2.0.6
+    - pyyaml==6.0
+    - regex==2022.10.31
+    - requests==2.28.2
+    - salesforce-lavis==1.0.2
+    - scikit-image==0.20.0
+    - scipy==1.9.1
+    - semver==2.13.0
+    - spacy==3.5.1
+    - tenacity==8.2.2
+    - timm==0.4.12
+    - tokenizers==0.13.2
+    - torch==1.13.1
+    - torchvision==0.14.1
+    - tqdm==4.65.0
+    - transformers==4.26.1
