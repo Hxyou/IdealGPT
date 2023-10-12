@@ -22,13 +22,13 @@ def IdealGPT(vqa_model, dataset, data_ids, model, save_path='', max_n_rounds=5, 
         vqa_model : vqa model.
         dataset: the dataset used to caption
         data_ids (list): a list of sample ids in the dataset
-        model (str or Blip2): the model name used to ask quetion. Valid values are 'gpt3', 'chatgpt', and their concrete model names 
+        model (str or Blip2): the model name used to ask question. Valid values are 'gpt3', 'chatgpt', and their concrete model names 
                     including 'text-davinci-003', 'davinci,' and 'gpt-3.5-turbo'.
                     If passing a Blip2 instance, will use its backend LLM.
         save_path (str): the path to save caption results. If it is empty, results are not being saved.
         max_n_rounds (int): the max number of chat rounds
         n_blip2_context (int): how many previous QA rounds can blip2 see. negative value means blip2 can see all 
-        print_mode (str): print mode. 'chat' for printing everying. 'bar' for printing everthing but the chat process. 'no' for no printing
+        print_mode (str): print mode. 'chat' for printing everything. 'bar' for printing everything but the chat process. 'no' for no printing
     """
     if model == 'chatgpt':
         model = 'gpt-3.5-turbo'
@@ -152,7 +152,7 @@ def parse():
     parser.add_argument('--dataset', type=str, default='vcr_val',
                         help='Names of the dataset to use in the experiment. Valid datasets include vcr_val, ve_dev. Default is vcr_val')
     parser.add_argument('--max_n_rounds', type=int, default=4,
-                        help='Nax Number of QA rounds between GPT and BLIP-2. Default is 4.')
+                        help='Max Number of QA rounds between GPT and BLIP-2. Default is 4.')
     parser.add_argument('--model', type=str, default='chatgpt', choices=['chatgpt', 'gpt4'],
                         help='model used to ask question. can be gpt3, chatgpt, or its concrete tags in openai system')
     parser.add_argument('--vqa_model', type=str, default='blip2_t5_xxl', choices=['blip2_t5_xxl', 'blip2_t5_xl',  'blip2_opt_6.7b', 'blip2_opt_2.7b', 'llava', 'minigpt4'],
