@@ -18,7 +18,7 @@
 
 ## Installation
 
-Clone our repository and create a new python environment via the follwing command
+Clone our repository and create a new python environment via the following command
 ```
 git clone https://github.com/Hxyou/IdealGPT.git
 cd IdealGPT
@@ -36,7 +36,7 @@ In our paper, we conduct experiments on [SNLI-VE](https://github.com/necla-ml/SN
 
 > NOTE: 1. If you would like to run our code, please replace the filepath with yours. 2. You need to configure an OpenAI key to use OpenAI API. More details can be found at [OpenAI platform](https://platform.openai.com/)
 
-In order to save money and running time, you can randomly select 500 samples from the val/dev split of VCR and SNLI-VE at first. (dataset can be vcr_val or ve_dev)
+In order to save money and running time, you can randomly select 500 samples from the val/dev split of VCR and SNLI-VE at first. (dataset can be `vcr_val` or `ve_dev`)
 
 ```
 cd misc
@@ -58,7 +58,7 @@ python blip_gpt_main.py  \
     --data_subset=/your/selected/data/subset/path \
     --openai_key=<your_openai_key>
 ```
-You can replace vcr_val with ve_dev to obtain SNLI-VE results.
+You can replace `vcr_val` with `ve_dev` to obtain SNLI-VE results.
 
 ## Evaluation
 We employ accuracy to evaluate zero-shot performance on VCR and SNLI-VE.
