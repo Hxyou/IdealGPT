@@ -1,10 +1,10 @@
 # IdealGPT: Iteratively Decomposing Vision and Language Reasoning via Large Language Models.
 
-[Haoxuan You*](https://hxyou.github.io/), [Rui Sun*](https://www.linkedin.com/in/rui-sun-three/), [Zhecan Wang*](https://www.zhecanwang.com/), [Long Chen](https://zjuchenlong.github.io/), [Gengyu Wang](http://wanggengyu.com/), [Hammad A. Ayyubi](https://hammad001.github.io/), [Kai-Wei Chang](http://web.cs.ucla.edu/~kwchang/), [Shih-Fu Chang](https://www.ee.columbia.edu/~sfchang/)
+[Haoxuan You*](https://hxyou.github.io/), [Rui Sun*](https://threesr.github.io/), [Zhecan Wang*](https://www.zhecanwang.com/), [Long Chen](https://zjuchenlong.github.io/), [Gengyu Wang](http://wanggengyu.com/), [Hammad A. Ayyubi](https://hammad001.github.io/), [Kai-Wei Chang](http://web.cs.ucla.edu/~kwchang/), [Shih-Fu Chang](https://www.ee.columbia.edu/~sfchang/)
 
 [*: equal contribution]
 
-[Paper](https://arxiv.org/pdf/2305.14985.pdf)
+[Paper](https://aclanthology.org/2023.findings-emnlp.755.pdf)
 
 ![demo](figs/main_diagram.jpg)
 
